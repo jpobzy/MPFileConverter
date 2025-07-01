@@ -6,15 +6,6 @@ from werkzeug.utils import secure_filename
 from pathlib import Path
 from flask_cors import CORS
 
-
-def init():
-    if not Path(Path.cwd() / 'uploads').exists():
-        Path.mkdir(Path.cwd() / 'uploads')
-    if not Path(Path.cwd() / 'converted').exists():
-        Path.mkdir(Path.cwd() / 'converted')
-
-
-
 # UPLOAD_FOLDER = Path.cwd() / '/uploads'
 ALLOWED_EXTENSIONS = {'mp4'}
 
@@ -68,7 +59,6 @@ def getMP3File():
                 return f'error conversion type not found for {conversionType}', 404
             
 if __name__ == "__main__":
-    init()
     host = '127.0.0.1'
     port = 8080
     app.run(host=host, port=port)

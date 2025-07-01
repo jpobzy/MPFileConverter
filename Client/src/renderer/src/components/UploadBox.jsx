@@ -27,8 +27,8 @@ function UploadBox(){
         const response = info.file.response
          console.log(response)  
         message.success(`${info.file.name} file uploaded successfully.`);
-        
 
+        
       } else if (status === 'error') {
         const response = info.file.response
         console.log(response, '3123')

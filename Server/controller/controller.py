@@ -29,23 +29,22 @@ class controller():
         """
         filename = filename.replace('.mp4', '')
         
-
         if not Path(src).exists():
             return f'ERROR FILE {filename} DOES NOT EXIST IN THE ', 404
         
-        # AudioFileClip(str(src)).write_audiofile( self.temp / f'{filename}.mp3', codec='mp3', bitrate='192k')
-        print(f'dst: {dst}')
+        AudioFileClip(str(src)).write_audiofile( self.temp / f'{filename}.mp3', codec='mp3', bitrate='192k')
+       
         if dst != 'undefined':
             if not Path(dst).exists():
-                # shutil.move(self.temp / f'{filename}.mp3', Path.home() / 'Downloads')
+                shutil.move(self.temp / f'{filename}.mp3', Path.home() / 'Downloads')
                 return f'ERROR PATH {dst} COULD NOT BE LOCATED, MOVING FILE TO DOWNLOADS FOLDER', 202
-            # shutil.move(self.temp / f'{filename}.mp3', dst)
+            shutil.move(self.temp / f'{filename}.mp3', dst)
         else:
-            # shutil.move(self.temp / f'{filename}.mp3', Path.home() / 'Downloads')
+            shutil.move(self.temp / f'{filename}.mp3', Path.home() / 'Downloads')
             pass
 
-        # if Path(self.temp / f'{filename}.mp4').exists():
-        #     os.remove(self.temp / f'{filename}.mp4') 
+        if Path(self.temp / f'{filename}.mp4').exists():
+            os.remove(self.temp / f'{filename}.mp4') 
         return 'Success', 200
         
 
@@ -64,16 +63,15 @@ class controller():
         else: # 32bit
             codec='pcm_s32le'
 
-
-        AudioFileClip(str(src)).write_audiofile(self.temp / f'{filename}.wav', codec=codec)
-
+        AudioFileClip(str(src)).write_audiofile( self.temp / f'{filename}.wav', codec=codec)
+       
         if dst != 'undefined':
             if not Path(dst).exists():
-                shutil.move(self.temp / f'{filename}.mp3', Path.home() / 'Downloads')
+                shutil.move(self.temp / f'{filename}.wav', Path.home() / 'Downloads')
                 return f'ERROR PATH {dst} COULD NOT BE LOCATED, MOVING FILE TO DOWNLOADS FOLDER',304
             shutil.move(self.temp / f'{filename}.wav', dst)
         else:
-            shutil.move(self.temp / f'{filename}.mp3', Path.home() / 'Downloads')
+            shutil.move(self.temp / f'{filename}.wav', Path.home() / 'Downloads')
         
         if Path(self.temp / f'{filename}.mp4').exists():
             os.remove(self.temp / f'{filename}.mp4') 
