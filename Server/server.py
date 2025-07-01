@@ -5,6 +5,7 @@ from flask import Flask, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 from pathlib import Path
 from flask_cors import CORS
+import signal
 
 # UPLOAD_FOLDER = Path.cwd() / '/uploads'
 ALLOWED_EXTENSIONS = {'mp4'}
@@ -58,6 +59,15 @@ def getMP3File():
             else:
                 return f'error conversion type not found for {conversionType}', 404
             
+
+@app.route('/shutdown', methods=['GET'])
+def shutdown():
+    pid = os.getpid()
+    print(f'Shutting down Flask server (PID: {pid})')
+    os.kill(pid, signal.SIGTERM)
+    return 'Server shutting down...'
+
+
 if __name__ == "__main__":
     host = '127.0.0.1'
     port = 8080

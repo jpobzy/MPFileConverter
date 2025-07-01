@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import axios from 'axios';
 
 let flaskProcess;
 const { spawn } = require('child_process');
@@ -106,16 +107,18 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-
-app.on('before-quit', () => {
-  if (flaskProcess) {
-    console.log('Killing Flask server...');
-    flaskProcess.kill();
+app.on('before-quit', async () => {
+  try {
+    await axios.get('http://127.0.0.1:8080/shutdown');
+  } catch (e) {
+    console.warn('Could not reach Flask to shut down');
   }
 });
+
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
+
