@@ -5,6 +5,20 @@
   "main": "./out/main/index.js",
   "author": "example.com",
   "homepage": "https://electron-vite.org",
+  "build":{
+     "extraResources": [
+        {
+          "from": "dist/server.exe",
+          "to": "server.exe"
+        }
+      ],
+      "files": [
+        "out/**/*"
+      ],
+      "win": {
+        "target": ["nsis", "portable"]
+      }
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
@@ -34,6 +48,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "electron": "^35.1.5",
     "electron-builder": "^25.1.8",
+    "electron-is-dev": "^3.0.1",
     "electron-vite": "^3.1.0",
     "eslint": "^9.24.0",
     "eslint-plugin-react": "^7.37.5",

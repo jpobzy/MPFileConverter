@@ -3,40 +3,43 @@ import { InboxOutlined } from '@ant-design/icons';
 import { message, Upload, Input, Button, Select } from 'antd';
 const { Dragger } = Upload;
 import { useState, useEffect } from 'react';
-
+import '../assets/uploadbox.css'
 
 function UploadBox(){
   const [inputValue, setInputValue] = useState()
-  const [conversionType, setConversionType] = useState()
+  const [conversionType, setConversionType] = useState('mp3')
   const props = {
 
     name: 'file',
     multiple: true,
-    action: 'http://127.0.0.1:8080/uploadFileToMP3',
+    action: 'http://127.0.0.1:8080/uploadFile',
     headers: {},
     data: () => ({
       'conversionDST': inputValue,
       'conversionType': conversionType
     }),
-    // onChange(info) {
-    //   const { status } = info.file;
-    //   if (status !== 'uploading') {
-    //     console.log(info.file, info.fileList);
-    //   }
-    //   if (status === 'done') {
-    //     message.success(`${info.file.name} file uploaded successfully.`);
-    //   } else if (status === 'error') {
-    //     message.error(`${info.file.name} file upload failed.`);
-    //   }
-    // },
-    onDrop(e) {
-      console.log('Dropped files', e.dataTransfer.files);
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (status === 'done') {
+        const response = info.file.response
+         console.log(response)  
+        message.success(`${info.file.name} file uploaded successfully.`);
+        
+
+      } else if (status === 'error') {
+        const response = info.file.response
+        console.log(response, '3123')
+        message.error(`${info.file.name} file upload failed.`);
+      }
     },
+    // onDrop(e) {
+    //   console.log('Dropped files', e.dataTransfer.files);
+    // },
   };
 
-  const handleChange = value => {
-    console.log(`selected ${value}`);
-  };
 
   return (
     <div>
@@ -65,8 +68,7 @@ function UploadBox(){
           </p>
           <p className="ant-upload-text">Click or drag file to this area to upload</p>
           <p className="ant-upload-hint">
-            Support for a single or bulk upload. Strictly prohibited from uploading company data or other
-            banned files. 
+            Support for a single or bulk upload. MP4 files ONLY
           </p>
         </Dragger>       
       </div>

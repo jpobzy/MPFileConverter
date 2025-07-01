@@ -23,8 +23,7 @@ CORS(app)
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 controllerObj = controller()
 
-
-
+localPaths = ['3D Objects', 'Desktop', 'Documents', 'Downloads', 'Music', 'Pictures', 'Videos', 'C:\\']
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -32,10 +31,10 @@ def allowed_file(filename):
 
 @app.route('/')
 def hello():
-    print(f'query: {request.query_string}')
+    # print(f'query: {request.query_string}')
     return 'Hello World'
 
-@app.route('/uploadFileToMP3', methods=['POST'])
+@app.route('/uploadFile', methods=['POST'])
 def getMP3File():
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -44,59 +43,30 @@ def getMP3File():
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return 'File not selected', 404
-        if file and allowed_file(file.filename):
-            
-            filename = secure_filename(file.filename)
-            src = controllerObj.saveFile(file, filename)
-            queryParams = request.query_string.decode('utf-8')
-            for i, v in request.form.items():
-                print(i, v)
 
-            if 'filedst' not in queryParams:
-                dst = None
-            else:
-                dst = queryParams.split('=')[1]
-            
-            # controllerObj.convertFileToMP3(src = src, dst=dst, filename=filename)
-            return 'ok', 200
-
-@app.route('/uploadFileToWAV', methods=['POST'])
-def getWAVFile():
-    if request.method == 'POST':
-        print('dasdsa')
-        if 'file' not in request.files:
-            flash('No file part')
-            return 'File not found', 404
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        file = request.files['file']
         if file.filename == '':
             flash('No selected file')
             return 'File not selected', 404
         
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
+            filename = secure_filename(file.filename)    
+            dst = request.form['conversionDST']
+            conversionType = request.form['conversionType']
+            
             src = controllerObj.saveFile(file, filename)
-            query = request.query_string.decode('utf-8')
-            if '&' in query:
-                wav, dst = request.query_string.decode('utf-8').split('&')
-                wav = wav.split('=')[1]
-                dst = dst.split('=')[1]
-            else:
-                wav = query.split('=')[1] # params format NEEDS to be wav: 16bit or wav: 32bit
-                dst=None
-            
-            if wav != '16bit' and wav != '32bit':
-                return f'INCORRECT WAV PARAMS FORMAT: {request.query_string}, PARSED WAV=: {wav}', 400
-            
-            controllerObj.convertFileToWAV(src=src, filename=filename, wav=wav, dst=dst)
-            return 'ok', 200
-        else:
-            print('no file or file not allowed for ', file.filename)
 
+            if conversionType == 'mp3':
+                return controllerObj.convertFileToMP3(src = src, dst=dst, filename=filename)
+            
+            elif conversionType == 'wav-16bit':
+                return controllerObj.convertFileToWAV(src=src, filename=filename, wav='16bit', dst=dst)
+            
+            elif conversionType == 'wav-32bit':
+                return controllerObj.convertFileToWAV(src=src, filename=filename, wav='32bit', dst=dst)
+            
+            else:
+                return f'error conversion type not found for {conversionType}', 404
+            
 if __name__ == "__main__":
     init()
     host = '127.0.0.1'

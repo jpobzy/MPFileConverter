@@ -3,6 +3,36 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+let flaskProcess;
+const { spawn } = require('child_process');
+const path = require('path');
+
+function startFlaskServer() {
+  const exePath = path.join(process.resourcesPath, 'server.exe');
+  console.log('Starting Flask server at:', exePath);
+
+  const flaskProcess = spawn(exePath);
+
+  flaskProcess.stdout.on('data', data => {
+    console.log(`Flask stdout: ${data.toString()}`);
+  });
+
+  flaskProcess.stderr.on('data', data => {
+    console.error(`Flask stderr: ${data.toString()}`);
+  });
+
+  flaskProcess.on('close', code => {
+    console.log(`Flask process exited with code ${code}`);
+  });
+
+  flaskProcess.on('error', err => {
+    console.error('Flask process failed:', err);
+  });
+
+  return flaskProcess;
+}
+
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -39,6 +69,7 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  // startFlaskServer();
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -70,5 +101,21 @@ app.on('window-all-closed', () => {
   }
 })
 
+
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+
+app.on('before-quit', () => {
+  if (flaskProcess) {
+    console.log('Killing Flask server...');
+    flaskProcess.kill();
+  }
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});

@@ -1,3 +1,8 @@
 Server/controller/__pycache__/
 Server/uploads
 Server/converted
+*.pyc
+Server/server.spec
+/Server/dist
+/Server/build
+videoplayback.mp4
